@@ -1,5 +1,7 @@
 package com.kaishengit.entity;
 
+import java.util.List;
+
 public class User {
     private Integer id;
 
@@ -10,6 +12,15 @@ public class User {
     private String password;
 
     private Integer countryId;
+    private Country country;
+    private  List<Tag> tagList;
+    public User() {}
+    public User(String userName,String address,String password,int countryId) {
+        this.userName = userName;
+        this.address = address;
+        this.password = password;
+        this.countryId = countryId;
+    }
 
     public Integer getId() {
         return id;
@@ -51,6 +62,22 @@ public class User {
         this.countryId = countryId;
     }
 
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+    }
+
+    public List<Tag> getTagList() {
+        return tagList;
+    }
+
+    public void setTagList(List<Tag> tagList) {
+        this.tagList = tagList;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -59,6 +86,8 @@ public class User {
                 ", address='" + address + '\'' +
                 ", password='" + password + '\'' +
                 ", countryId=" + countryId +
+                ", country=" + country +
+                ", tagList=" + tagList +
                 '}';
     }
 }

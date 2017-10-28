@@ -6,6 +6,7 @@ import com.kaishengit.entity.User;
 import com.kaishengit.entity.UserExample;
 import com.kaishengit.mapper.UserMapper;
 import com.kaishengit.util.MyBatisUtil;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.After;
 import org.junit.Before;
@@ -46,11 +47,11 @@ public class UserMapperTest {
     }
     @Test
     public void insert() {
-        User user = new User();
-        user.setUserName("张华");
-        user.setAddress("周口");
-        user.setPassword("1001");
-        user.setCountryId(1);
+        User user = new User("李华","北京","110",1);
+//        user.setUserName("张华");
+//        user.setAddress("周口");
+//        user.setPassword("1001");
+//        user.setCountryId(1);
         //userMapper.insert(user);
         userMapper.insertSelective(user);
         sqlSession.commit();
@@ -135,6 +136,29 @@ public class UserMapperTest {
         for (User user : userList) {
             System.out.println("指定分页：" + user);
         }
+    }
+    //user和country表联查
+    @Test
+    public void findCountryByUserId() {
+        User user = userMapper.findCountryByUserId(2);
+        System.out.println(user);
+    }
+    //查找某个用户对应的多个tag标签
+    @Test
+    public void findUserTagById() {
+        User user = userMapper.findUserTagById(5);
+        System.out.println(user);
+    }
+    //批量插入，一次插入多条user对象
+    @Test
+    public void batchInsert() {
+        User user1 = new User("李明","上海","120",1);
+        User user2 = new User("李华","深圳","110",1);
+        User user3 = new User("李雷","杭州","110",1);
+//        将三个user对象组成的数组转化为userList集合
+        List<User> userList = Arrays.asList(user1,user2,user3);
+        userMapper.batchInsert(userList);
+        sqlSession.commit();
     }
 
 }

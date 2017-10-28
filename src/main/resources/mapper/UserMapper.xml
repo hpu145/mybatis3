@@ -210,9 +210,55 @@
       country_id = #{countryId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
-
+    <!--分页查询-->
     <select id="page" resultType="user">
         SELECT * FROM t_user
     </select>
+    <!--多表查询-->
+    <resultMap id="baseMap" type="com.kaishengit.entity.User">
+        <id column="id" property="id"/>
+        <id column="user_name" property="userName"/>
+        <id column="address" property="address"/>
+        <id column="password" property="password"/>
+        <id column="country_id" property="countryId"/>
+    </resultMap>
+    <resultMap id="userMap" type="com.kaishengit.entity.User" extends="baseMap">
+        <!--在实体类user中封装一个country属性，association property对应user中的country属性-->
+        <association property="country" javaType="com.kaishengit.entity.Country">
+            <id column="id" property="id"/>
+            <id column="country_name" property="countryName"/>
+        </association>
+    </resultMap>
+    <!--user和country表联查-->
+    <select id="findCountryByUserId" resultMap="userMap">
+        SELECT tu.id,user_name,address,password,country_id,tc.id,tc.country_name
+        FROM t_user AS tu LEFT JOIN t_country AS tc ON tu.country_id = tc.id
+        WHERE tu.id = #{id}
+    </select>
+
+    <resultMap id="userWithTagMap" type="com.kaishengit.entity.User" extends="baseMap">
+        <!--实体类user中封装tagList属性-->
+        <collection property="tagList" ofType="com.kaishengit.entity.Tag">
+            <id column="id" property="id"/>
+            <id column="tag_name" property="tagName"/>
+        </collection>
+    </resultMap>
+    <!--查找某个用户对应的多个tag标签-->
+    <select id="findUserTagById" parameterType="int" resultMap="userWithTagMap">
+        SELECT tu.id,user_name,tt.tag_name FROM t_user AS tu
+        INNER JOIN user_tag ON tu.id = user_tag.user_id
+        INNER JOIN t_tag AS tt ON tt.id = user_tag.tag_id
+        WHERE tu.id = #{id}
+    </select>
+    <!--批量插入，一次插入多条user对象-->
+    <insert id="batchInsert" parameterType="user">
+        INSERT INTO t_user (user_name, address, password,country_id)
+        VALUES
+        <!--将多个user对象封装成userList集合中,注意下面sql语句要加括号-->
+        <foreach collection="userList" item="user" separator=",">
+            (#{user.userName},#{user.address},#{user.password},#{user.countryId})
+        </foreach>
+    </insert>
+
 
 </mapper>

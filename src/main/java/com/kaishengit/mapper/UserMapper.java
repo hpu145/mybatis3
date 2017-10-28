@@ -30,4 +30,7 @@ public interface UserMapper {
 
     List<User> page(@Param("pageSize")int pageSize,
                     @Param("pageNum")int pageNum);
+    User findCountryByUserId(@Param("id") int id);
+    User findUserTagById(int id);
+    int batchInsert(@Param("userList") List<User> userList);
 }
